@@ -161,8 +161,9 @@
     wa.setAttribute("aria-disabled","false");
   }
   // Comunica l'altezza alla pagina del sito che la incorpora
-  function altezza(){ try { parent.postMessage({ppvAltezza: document.documentElement.scrollHeight}, "*"); } catch(e){} }
-  if (window.ResizeObserver) new ResizeObserver(altezza).observe(document.body);
+  var wrapEl = document.querySelector(".wrap");
+  function altezza(){ try { parent.postMessage({ppvAltezza: Math.ceil(wrapEl.getBoundingClientRect().height) + 4}, "*"); } catch(e){} }
+  if (window.ResizeObserver) new ResizeObserver(altezza).observe(wrapEl);
   window.addEventListener("load", altezza);
 
   viaggio.addEventListener("input", aggiorna);
