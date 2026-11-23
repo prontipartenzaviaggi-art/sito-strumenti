@@ -160,6 +160,11 @@
     wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(msg);
     wa.setAttribute("aria-disabled","false");
   }
+  // Comunica l'altezza alla pagina del sito che la incorpora
+  function altezza(){ try { parent.postMessage({ppvAltezza: document.documentElement.scrollHeight}, "*"); } catch(e){} }
+  if (window.ResizeObserver) new ResizeObserver(altezza).observe(document.body);
+  window.addEventListener("load", altezza);
+
   viaggio.addEventListener("input", aggiorna);
   wa.addEventListener("click", function(e){ if (wa.getAttribute("aria-disabled") === "true") e.preventDefault(); });
   document.getElementById("azzera").addEventListener("click", function(){
