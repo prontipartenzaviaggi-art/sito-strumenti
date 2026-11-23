@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scegli il tuo posto in bus · Pronti Partenza Viaggi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blu:#0b2a5b; --blu-chiaro:#e8eef8; --testo:#1f2937; --grigio:#6b7280;
+    --rosso:#e0263a; --fucsia:#d6197f; --verde:#25d366; --libero:#ffffff; --bordo:#c9d3e3;
+    --sel:#0b2a5b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#fff;color:var(--testo);font-family:"DM Sans",system-ui,sans-serif}
+  .wrap{max-width:860px;margin:0 auto;padding:16px;display:grid;gap:24px;grid-template-columns:minmax(0,300px) minmax(0,1fr);align-items:start}
+  @media (max-width:700px){.wrap{grid-template-columns:1fr}}
+
+  /* Pullman */
+  .bus{background:var(--blu-chiaro);border:2px solid var(--blu);border-radius:46px 46px 18px 18px;padding:18px 14px 16px;justify-self:center;width:100%;max-width:300px}
+  .front{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--grigio);margin:0 4px 12px}
+  .volante{width:30px;height:30px;border:3px solid var(--blu);border-radius:50%;position:relative}
+  .volante:after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;background:var(--blu);border-radius:50%}
+  .grid{display:grid;grid-template-columns:1fr 1fr .8fr 1fr 1fr;gap:6px}
+  .seat{appearance:none;border:2px solid var(--bordo);background:var(--libero);border-radius:9px 9px 5px 5px;
+        height:42px;font:700 13px "DM Sans",sans-serif;color:var(--blu);cursor:pointer;position:relative;padding:0;
+        display:flex;align-items:center;justify-content:center;transition:transform .08s}
+  .seat:active{transform:scale(.94)}
+  .seat.p4a{border-color:var(--rosso)}
+  .seat.p4b{border-color:var(--fucsia)}
+  .seat.p4a:before,.seat.p4b:before{content:"";position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--rosso)}
+  .seat.p4b:before{background:none;width:auto;height:auto;content:"★";color:var(--fucsia);font-size:9px;top:1px;right:3px}
+  .seat[aria-pressed="true"]{background:var(--sel);border-color:var(--sel);color:#fff}
+  .seat:focus-visible{outline:3px solid #f5b400;outline-offset:2px}
+  .nota{grid-column:span 2;border:2px dashed var(--bordo);border-radius:6px;font-size:10px;color:var(--grigio);
+        display:flex;align-items:center;justify-content:center;text-align:center;min-height:40px}
+  .nota.porta{border-color:var(--fucsia);color:var(--fucsia);font-weight:700}
+  .fila{font-size:10px;color:var(--grigio);display:flex;align-items:center;justify-content:center}
+
+  /* Pannello */
+  h2{font-size:22px;margin:0 0 6px;color:var(--blu)}
+  p{margin:0 0 12px;line-height:1.5}
+  .legenda{list-style:none;padding:0;margin:0 0 16px;display:grid;gap:8px;font-size:14px}
+  .legenda li{display:flex;align-items:center;gap:10px}
+  .ico{width:22px;height:22px;border-radius:6px 6px 4px 4px;border:2px solid var(--bordo);background:#fff;flex:none;position:relative}
+  .ico.r{border-color:var(--rosso)} .ico.r:after{content:"";position:absolute;top:2px;right:2px;width:5px;height:5px;border-radius:50%;background:var(--rosso)}
+  .ico.f{border-color:var(--fucsia)} .ico.f:after{content:"★";position:absolute;top:-3px;right:1px;font-size:8px;color:var(--fucsia)}
+  .ico.s{background:var(--sel);border-color:var(--sel)}
+  .ico.g{border-style:dashed}
+  .scelta{background:#f6f8fc;border:1px solid var(--bordo);border-radius:12px;padding:14px;margin-bottom:12px}
+  .scelta strong{color:var(--blu)}
+  .totale{font-size:15px;margin-top:6px}
+  label{display:block;font-size:13px;font-weight:500;margin:10px 0 4px}
+  input{width:100%;padding:10px 12px;border:1px solid var(--bordo);border-radius:8px;font:15px "DM Sans",sans-serif}
+  .wa{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;padding:14px;border:0;border-radius:10px;
+      background:var(--verde);color:#fff;font:700 16px "DM Sans",sans-serif;cursor:pointer;text-decoration:none}
+  .wa[aria-disabled="true"]{background:#a7b0bf;cursor:not-allowed}
+  .piccolo{font-size:12.5px;color:var(--grigio);margin-top:10px;line-height:1.45}
+  .link{background:none;border:0;color:var(--blu);text-decoration:underline;font:500 13px "DM Sans",sans-serif;cursor:pointer;padding:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="bus" aria-label="Piantina del pullman, 51 posti">
+    <div class="front"><span>Autista</span><span class="volante" aria-hidden="true"></span><span>⬆ Avanti</span></div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div>
+    <h2>Tocca il posto che vuoi</h2>
+    <p>Puoi sceglierne più di uno, se viaggi in compagnia. Poi premi il pulsante verde e ci mandi la richiesta su WhatsApp.</p>
+
+    <ul class="legenda">
+      <li><span class="ico r"></span> 1ª fila: <strong>&nbsp;€4 a persona</strong></li>
+      <li><span class="ico f"></span> Fila dietro la porta centrale: <strong>&nbsp;€4 a persona</strong></li>
+      <li><span class="ico"></span> Tutti gli altri posti: <strong>&nbsp;€2 a persona</strong></li>
+      <li><span class="ico s"></span> Il posto che hai scelto</li>
+    </ul>
+
+    <div class="scelta" aria-live="polite">
+      <div id="riepilogo">Nessun posto scelto per ora.</div>
+      <div class="totale" id="totale"></div>
+      <button class="link" id="azzera" type="button" hidden>Ricomincia</button>
+    </div>
+
+    <label for="viaggio">Per quale viaggio? (nome e data)</label>
+    <input id="viaggio" type="text" placeholder="Es. Mercatini di Natale in Salento, 6 dicembre" autocomplete="off">
+
+    <a class="wa" id="wa" href="#" target="_blank" rel="noopener" aria-disabled="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2c.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+      Chiedi questi posti su WhatsApp
+    </a>
+
+    <p class="piccolo"><strong>La piantina non mostra i posti già occupati.</strong> Quando ci scrivi, i nostri consulenti
+      controllano se il posto è ancora libero e ti rispondono. Se è già preso, ti proponiamo il più vicino. Il supplemento
+      lo aggiungiamo alla tua prenotazione solo dopo la conferma.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  // Pullman 51 posti, 14 file.
+  // Lato sinistro: file 1-13 (2 posti). Lato destro: file 1-6 e 9-12 (2 posti),
+  // porta centrale alle file 7-8, toilette alla fila 13. Fila 14: 5 posti.
+  var WA = "390899437919";
+  var grid = document.getElementById("grid");
+  var scelti = [];   // {n, prezzo, fila}
+  var n = 0;
+
+  function prezzo(fila, lato){ if (fila === 1) return 4; if (fila === 9 && lato === "dx") return 4; return 2; }
+
+  function sedile(fila, lato){
+    n++;
+    var p = prezzo(fila, lato);
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "seat" + (fila === 1 ? " p4a" : (p === 4 ? " p4b" : ""));
+    b.textContent = n; b.setAttribute("aria-pressed","false");
+    b.setAttribute("aria-label", "Posto " + n + ", fila " + fila + ", €" + p);
+    var num = n;
+    b.addEventListener("click", function(){
+      var i = scelti.findIndex(function(s){ return s.n === num; });
+      if (i >= 0){ scelti.splice(i,1); b.setAttribute("aria-pressed","false"); }
+      else { scelti.push({n:num, prezzo:p, fila:fila}); b.setAttribute("aria-pressed","true"); }
+      aggiorna();
+    });
+    grid.appendChild(b);
+  }
+  function nota(testo, cls){ var d = document.createElement("div"); d.className = "nota " + (cls||""); d.textContent = testo; grid.appendChild(d); }
+  function corridoio(fila){ var d = document.createElement("div"); d.className = "fila"; d.textContent = fila; grid.appendChild(d); }
+
+  for (var f = 1; f <= 13; f++){
+    sedile(f,"sx"); sedile(f,"sx");
+    corridoio(f);
+    if (f === 7) nota("Porta centrale", "porta");
+    else if (f === 8) nota("Scalini", "porta");
+    else if (f === 13) nota("Toilette");
+    else { sedile(f,"dx"); sedile(f,"dx"); }
+  }
+  for (var k = 0; k < 5; k++) sedile(14, "fondo");
+
+  var wa = document.getElementById("wa"), viaggio = document.getElementById("viaggio");
+  function aggiorna(){
+    scelti.sort(function(a,b){ return a.n - b.n; });
+    var riep = document.getElementById("riepilogo"), tot = document.getElementById("totale"), az = document.getElementById("azzera");
+    if (!scelti.length){
+      riep.textContent = "Nessun posto scelto per ora."; tot.textContent = ""; az.hidden = true;
+      wa.setAttribute("aria-disabled","true"); wa.href = "#"; return;
+    }
+    var nums = scelti.map(function(s){ return s.n; });
+    var somma = scelti.reduce(function(t,s){ return t + s.prezzo; }, 0);
+    riep.innerHTML = (scelti.length === 1 ? "Hai scelto il posto " : "Hai scelto i posti ") + "<strong>" + nums.join(", ") + "</strong>";
+    tot.textContent = "Supplemento: €" + somma + (scelti.length > 1 ? " in tutto" : "");
+    az.hidden = false;
+    var v = viaggio.value.trim();
+    var msg = "Ciao! Vorrei scegliere " + (scelti.length === 1 ? "il posto " : "i posti ") + nums.join(", ") +
+      " in bus (supplemento €" + somma + ")" + (v ? " per il viaggio: " + v : "") +
+      ". Potete controllare se " + (scelti.length === 1 ? "è libero" : "sono liberi") + "?";
+    wa.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(msg);
+    wa.setAttribute("aria-disabled","false");
+  }
+  viaggio.addEventListener("input", aggiorna);
+  wa.addEventListener("click", function(e){ if (wa.getAttribute("aria-disabled") === "true") e.preventDefault(); });
+  document.getElementById("azzera").addEventListener("click", function(){
+    scelti = []; grid.querySelectorAll(".seat").forEach(function(s){ s.setAttribute("aria-pressed","false"); }); aggiorna();
+  });
+})();
+</script>
+</body>
+</html>
