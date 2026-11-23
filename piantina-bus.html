@@ -69,8 +69,8 @@
   </div>
 
   <div>
-    <h2>Tocca il posto che vuoi</h2>
-    <p>Puoi sceglierne più di uno, se viaggi in compagnia. Poi premi il pulsante verde e ci mandi la richiesta su WhatsApp.</p>
+    <h2>Tocca i posti che vuoi</h2>
+    <p>Viaggi in coppia, in famiglia o con gli amici? <strong>Scegli tutti i posti insieme</strong>: toccali uno dopo l'altro, poi premi il pulsante verde e ci mandi un'unica richiesta su WhatsApp.</p>
 
     <ul class="legenda">
       <li><span class="ico r"></span> 1ª fila: <strong>&nbsp;€4 a persona</strong></li>
@@ -150,7 +150,7 @@
     }
     var nums = scelti.map(function(s){ return s.n; });
     var somma = scelti.reduce(function(t,s){ return t + s.prezzo; }, 0);
-    riep.innerHTML = (scelti.length === 1 ? "Hai scelto il posto " : "Hai scelto i posti ") + "<strong>" + nums.join(", ") + "</strong>";
+    riep.innerHTML = (scelti.length === 1 ? "Hai scelto il posto " : "Hai scelto " + scelti.length + " posti: ") + "<strong>" + nums.join(", ") + "</strong>";
     tot.textContent = "Supplemento: €" + somma + (scelti.length > 1 ? " in tutto" : "");
     az.hidden = false;
     var v = viaggio.value.trim();
