@@ -102,9 +102,10 @@
 
 <script>
 (function(){
-  // Pullman 51 posti, 14 file.
-  // Lato sinistro: file 1-13 (2 posti). Lato destro: file 1-6 e 9-12 (2 posti),
-  // porta centrale alle file 7-8, toilette alla fila 13. Fila 14: 5 posti.
+  // Pullman 51 posti, 14 file (dalla grafica ufficiale dell'agenzia).
+  // Lato sinistro: file 1-13 (2 posti). Lato destro: file 1-5 e 9-13 (2 posti),
+  // toilette alla fila 6 e porta centrale alle file 7-8. Fila 14: 5 posti (47-51).
+  // Dietro la porta centrale: posti 29 e 30.
   var WA = "390899437919";
   var grid = document.getElementById("grid");
   var scelti = [];   // {n, prezzo, fila}
@@ -134,9 +135,9 @@
   for (var f = 1; f <= 13; f++){
     sedile(f,"sx"); sedile(f,"sx");
     corridoio(f);
-    if (f === 7) nota("Porta centrale", "porta");
-    else if (f === 8) nota("Scalini", "porta");
-    else if (f === 13) nota("Toilette");
+    if (f === 6) nota("Toilette");
+    else if (f === 7) { nota("Porta centrale", "porta"); grid.lastChild.style.gridRow = "span 2"; }
+    else if (f === 8) { /* occupata dalla porta centrale */ }
     else { sedile(f,"dx"); sedile(f,"dx"); }
   }
   for (var k = 0; k < 5; k++) sedile(14, "fondo");
