@@ -50,7 +50,8 @@
       if (el.textContent.trim().indexOf(SEGNAPOSTO) === 0) {
         var v = viaggioDaPassare();
         frame = document.createElement("iframe");
-        frame.src = SRC + (v ? "?viaggio=" + encodeURIComponent(v) : "");
+        // "agg" cambia ogni 10 minuti: il browser non usa mai una piantina vecchia dalla cache
+        frame.src = SRC + "?agg=" + Math.floor(Date.now() / 600000) + (v ? "&viaggio=" + encodeURIComponent(v) : "");
         frame.title = "Scegli il tuo posto in bus";
         frame.loading = "lazy";
         frame.style.cssText = "display:block;width:100%;border:0;height:900px;";
