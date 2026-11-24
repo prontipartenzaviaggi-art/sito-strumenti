@@ -1,7 +1,7 @@
 /* Pronti Partenza Viaggi — piantina posti bus.
    Caricato da Google Tag Manager (GTM-KPS549XS) su tutte le pagine.
    1) Sulle pagine dei viaggi (/dettaglio/...) si ricorda l'ultimo viaggio guardato (nome + data),
-      solo per la scheda aperta (sessionStorage), così la piantina può precompilare il viaggio.
+      nel browser per 3 ore (localStorage, vale anche tra schede diverse), così la piantina può precompilare il viaggio.
    2) Sulla pagina /posto-bus cerca il paragrafo segnaposto che inizia con "Non vedi la piantina?"
       e lo sostituisce con la piantina cliccabile, passandole il viaggio.
    Si può anche linkare /posto-bus?viaggio=Nome%20del%20viaggio per forzare il viaggio. */
@@ -28,14 +28,14 @@
     var nome = (document.title || "").split("|")[0].trim();
     if (!nome || /pronti partenza/i.test(nome)) return;
     var d = dataDaSoluzione();
-    try { sessionStorage.setItem(CHIAVE, JSON.stringify({ v: nome + (d ? ", " + d : ""), t: Date.now() })); } catch (e) {}
+    try { localStorage.setItem(CHIAVE, JSON.stringify({ v: nome + (d ? ", " + d : ""), t: Date.now() })); } catch (e) {}
   }
 
   function viaggioDaPassare() {
     var q = new URLSearchParams(location.search).get("viaggio");
     if (q) return q;
     try {
-      var s = JSON.parse(sessionStorage.getItem(CHIAVE) || "null");
+      var s = JSON.parse(localStorage.getItem(CHIAVE) || "null");
       if (s && s.v && Date.now() - s.t < 3 * 3600 * 1000) return s.v;
     } catch (e) {}
     return "";
